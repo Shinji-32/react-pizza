@@ -1,4 +1,5 @@
 import React from 'react';
+// Redux toolkit немає хуків, там є створення storage. Тому тут беремо ці хуки із react-redux
 import { useSelector, useDispatch } from 'react-redux';
 
 import { setCategoryId } from '../redux/slices/filterSlice';
@@ -11,29 +12,29 @@ import Pagination from '../components/Pagination';
 import { searchContext } from '../App';
 
 const Home = () => {
+  const {categoryId, sort} = useSelector((state) => state.filter); //тут видалили categoryId бо тілкьи число виводимо, а нам треба і число і сортайп. Також ми скоротили код таким чином за допомогою деструктуризації
+  const sortType = sort.sortProperty;//тут просто ми звертаємось до цього типу
   const dispatch = useDispatch();
-  const categoryId = useSelector((state) => state.filter.categoryId);
+
+
 
   const {searchValue} = React.useContext(searchContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading]=React.useState(true);
-  //const [categoryId, setCategoryId] = React.useState(0);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [sortType, setSortType] = React.useState({
-    name: 'popularity', 
-    sortProperty: 'rating',
-  });
+
 
 
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
+    console.log(id);
   }
 
   React.useEffect(() => {
     setIsLoading(true);
 
-    const sortBy = sortType.sortProperty.replace('-', '');
-    const order = sortType.sortProperty.includes('-') ? 'asc' : 'desc';
+    const sortBy = sortType.replace('-', '');
+    const order = sortType.includes('-') ? 'asc' : 'desc';
     const category = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `&search=${searchValue}` : '';
 
@@ -55,7 +56,7 @@ const Home = () => {
     <div className="container">
     <div className="content__top">
             <Categories value={categoryId} onChangeCategory={onChangeCategory}/>
-            <Sort value={sortType} onChangeSort={(i)=>setSortType(i)}/>
+            <Sort/>
           </div>
           <h2 className="content__title">All pizzas</h2>
           <div className="content__items">

@@ -12,15 +12,19 @@ const initialState = {
 const filterSlice = createSlice({
   name: 'filters',
   initialState,
-  reducers: {
+  reducers: { // в reducers передаємо об'єкти
     setCategoryId(state, action) {
       state.categoryId = action.payload;
+    },
+    setSort(state, action){
+      state.sort = action.payload;
     }
   }
+
 })
 
-
-export const {setCategoryId} = filterSlice.actions;
-
+//витягуємо actions(тобто конкретні властивості методу)
+export const {setCategoryId, setSort} = filterSlice.actions;
+//за замовчування експортуємо редюсер
 export default filterSlice.reducer;
 
