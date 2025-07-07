@@ -1,9 +1,32 @@
 import React, { Component } from 'react'
 import styles from './Search.module.scss';
+import debounce from 'lodash.debounce';
 import { searchContext } from '../../App';
 
+
 const Search = () => {
-const {searchValue, setSearchValue} = React.useContext(searchContext);
+  const [value, setValue] = React.useState('');
+  const {setSearchValue} = React.useContext(searchContext);
+  const inputRef = React.useRef();
+
+const onClickClear = () => {
+  setSearchValue('');
+  setValue('');
+  inputRef.current.focus();
+};
+
+const updateSerachValue = React.useCallback(
+    debounce((str) => {
+    setSearchValue(str);
+  }, 1000),
+  [], //useCallback таке як useEffect: отримує посилання на функцію та параметри через що
+  //буде відбуватися ререндинг. квадратні скобки дозволять один раз зробити тут ререндиг
+);
+
+const onChangeInput = (event) =>{ 
+  setValue(event.target.value);
+  updateSerachValue(event.target.value);
+}
 
 
     return(
@@ -23,11 +46,12 @@ const {searchValue, setSearchValue} = React.useContext(searchContext);
          c-25.7,25.7-59.9,39.9-96.2,39.9C180,352.5,145.8,338.3,120.1,312.6z"/>
       </svg>
         <input 
-        value={searchValue} 
-        onChange={event => setSearchValue(event.target.value)} 
+        ref = {inputRef}
+        value={value} 
+        onChange={onChangeInput} 
         className={styles.input} placeholder="Searching pizza ..." />
-      {searchValue && (
-        <svg onClick={() => setSearchValue('')} className={styles.clearIcon}
+      {value && (
+        <svg onClick={onClickClear} className={styles.clearIcon}
             height="48" 
             viewBox="0 0 48 48" 
             width="48" 
